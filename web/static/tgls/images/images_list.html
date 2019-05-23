@@ -113,11 +113,12 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-							<button type="button" class="btn btn-primary" @click="sendImage">确认发送</button>
+							<button type="button" class="btn btn-primary" @click="sendImage" @change="sendHeart">确认发送</button>
 						</div>
 					</div>
 				</div>
 			</div>
+
 		</div>
 		<!--该页面的所有请求统一在ImageController里面处理-->
 		<script type="text/javascript">
@@ -144,7 +145,10 @@
                         imageName:"",
                         wifiIp:"",
 						macAddress:""
-                    }
+                    },
+					/*后端返回的消息*/
+					msg:""
+
 				},
 				methods:{
 					query:function(){
@@ -222,18 +226,50 @@
                         ).then(res=>{
                             if(res.data.code==200){
                                 alert("发送请求已提交，正在处理")
-                                location.reload();
+								window.location.reload();
+                                this.setTimer();
                             }else{
-                                alert("发送失败！")
+								window.location.reload();
+                                alert("发送请求提交失败！")
                             }
                         }).catch(res=>{
                             alert("发送图片函数执行失败！")
                         })
-                    }
+                    },
+					/*发送心跳检查是否发送成功*/
+					sendHeart:function(){
+						sendAxios(
+							"image/check",
+							this.wifi
+						).then(res=>{
+							if(res.data.code==200){
+								window.location.reload();
+								alert("图片已发送")
+							}else if(res.data.code==400){
+								window.location.reload();
+								alert("图片发送失败")
+							}else{
+								this.setTimer();
+							}
+						}).catch(res=>{
+							alert("心跳函数执行失败，请联系管理员！");
+							window.location.reload();
+						})
+					},
+					setTimer:function(){
+						setInterval(this.sendHeart(),2000,2000);
+					},
+					mysure:function(){
+						$("#mydialog").modal("hide");
+						setTimeout(function(){
+							window.location.reload();
+						}, 1000);
+					}
 				},
 				created:function(){
 					this.query();
 				}
+
 			});
 		</script>
 	</body>
