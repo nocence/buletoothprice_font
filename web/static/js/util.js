@@ -6,7 +6,6 @@ function sendAxios(myUrl,myData){
         //创建axios实例，把基本的配置放进去
         const instance = axios.create({
             method : "POST", //请求方式
-
             url : commonUrl+myUrl, //请求地址
             params : myData
         });

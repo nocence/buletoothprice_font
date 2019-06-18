@@ -74,6 +74,7 @@
 							<td><img :src="'data:image/bmp;base64,'+image.imageUrl"></td>
 							<td>
 								<button class="layui-btn layui-btn-xs" type="button" data-toggle="modal" data-target="#myModal" @click="getAllStores(image)">发送图片</button>
+								<button class="layui-btn layui-btn-xs" type="button" data-toggle="modal" data-target="#deleteModal" @click="deleteimg(image)">删除图片</button>
 							</td>
 						</tr>
 					</tbody>
@@ -86,7 +87,7 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							<h4 class="modal-title" id="myModalLabel">发送图片到标签</h4>
+							<h4 class="modal-title text-center" id="myModalLabel" >发送图片到标签</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row cl">
@@ -118,7 +119,20 @@
 					</div>
 				</div>
 			</div>
-
+			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 class="modal-title text-center" id="myModalLabel1" >确定要删除图片吗？</h4>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" @click="sendDeleteImage" >确认删除</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<!--该页面的所有请求统一在ImageController里面处理-->
 		<script type="text/javascript">
@@ -226,7 +240,6 @@
                         ).then(res=>{
                             if(res.data.code==200){
                                 alert("发送请求已提交，正在处理")
-								window.location.reload();
                                 this.setTimer();
                             }else{
 								window.location.reload();
@@ -255,6 +268,31 @@
 							alert("心跳函数执行失败，请联系管理员！");
 							window.location.reload();
 						})
+					},
+					deleteimg:function(theImage){
+						this.wifi.imageName = theImage.imageName;
+					},
+					sendDeleteImage:function(){
+						if(this.wifi!=null){
+							sendAxios(
+								"image/deleteOne",
+								this.wifi
+							).then(res=>{
+								if(res.data.code==200){
+									alert("图片已删除")
+									window.location.reload();
+								}else{
+									alert("删除图片失败")
+									window.location.reload();
+								}
+							}).catch(res=>{
+								alert("删除图片函数执行失败")
+								window.location.reload();
+							})
+						}else{
+							alert("没有选中删除对象")
+							window.location.reload();
+						}
 					},
 					setTimer:function(){
 						setInterval(this.sendHeart(),2000,2000);
