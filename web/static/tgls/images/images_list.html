@@ -238,7 +238,8 @@
           sendWifi.macAddress = this.hasChoosedData[i].macAddress;
           this.sendAllWifi.push(sendWifi)
         }
-        console.log(this.sendAllWifi)
+        console.log(this.sendAllWifi);
+        var that = this;
        $.ajax({
          type:"POST",
          contentType: "application/json;charset=UTF-8",
@@ -248,7 +249,7 @@
          success:function(res){
           if(res.code==200){
             alert("发送请求已提交，正在处理")
-            this.setTimerAll();
+            that.setTimerAll();
           }else if(res.code == 400){
             window.location.reload();
             alert("发送请求提交失败！")
@@ -261,6 +262,7 @@
       },
       /*批量发送的心跳检测*/
       sendHeartAll:function(){
+          var that = this;
         $.ajax({
           type:"POST",
           contentType: "application/json;charset=UTF-8",
@@ -270,12 +272,9 @@
           success:function (res) {
             if (res.code == 200) {
               window.location.reload();
-              alert("图片已发送")
-            } else if (res.code == 400) {
-              window.location.reload();
-              alert("图片发送失败")
+              alert(res.msg)
             } else {
-              this.setTimerAll();
+                that.setTimerAll();
             }
           },
           error:function(){
@@ -308,7 +307,7 @@
         ).then(res => {
           if (res.data.code == 200) {
           val.allTags = res.data.list;
-        } else {
+} else {
           alert("根据wifi查询价签失败！")
         }
       }).catch(res => {
